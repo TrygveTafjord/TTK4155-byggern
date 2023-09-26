@@ -15,7 +15,7 @@
 #define RAM_BASE_ADDRESS 0x1000;
 #define NUMBER_OF_ANALOG_VARIABLS 4
 
-enum JoystickDirections {
+typedef enum JoystickDirections {
 	LEFT,
 	RIGHT,
 	UP,
@@ -50,3 +50,5 @@ ADC_Calibration pos_calibration(ADC_Calibration readings);
 void adc_test(void);
 
 #endif /* ADC_H_ */
+
+enum JoystickDirections JoystickToEnum(ADC_readings readings);

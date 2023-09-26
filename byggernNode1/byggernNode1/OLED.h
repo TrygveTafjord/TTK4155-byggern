@@ -23,6 +23,8 @@ void OLED_clear_line(uint8_t line);
 void OLED_pos(uint8_t row, uint8_t column);
 void OLED_write(char* ch);
 void OLED_write_string(char* ch, uint8_t line, uint8_t col);
+void OLED_print_list(char *str_list[], int hover_menu_number);
 
+int length_of_list(const char **list);
 
 #endif /* OLED_H_ */

@@ -10,6 +10,8 @@
 #include "OLED.h"
 #include "font.h"
 
+
+
 void OLED_init(void){
 	volatile char *ext_mem = (char *) 0x1000;
 	printf("initializing OLED\n\r");
@@ -52,9 +54,11 @@ void OLED_goto_line(uint8_t line){
 }
 void OLED_goto_column(uint8_t col){
 	volatile char *ext_mem_cmd = (char *) 0x1000;
-	ext_mem_cmd[0] = 0x21;
+	ext_mem_cmd[0] = col & 0b00001111;
+	ext_mem_cmd[0] = 0x10 | (col >> 4);
+	/*ext_mem_cmd[0] = 0x21;
 	ext_mem_cmd[0] = col;
-	ext_mem_cmd[0] = 127;
+	ext_mem_cmd[0] = 127;*/
 	
 }
 void OLED_clear_line(uint8_t line){
@@ -78,7 +82,7 @@ void OLED_write(char* ch){
 	for (uint8_t i=0;i<8;i++)
 	{
 		ext_mem1[0] = pgm_read_byte(&(font8[(uint8_t)ch-32][i]));	
-		_delay_ms(1);
+		
 	}
 
 }
@@ -87,8 +91,38 @@ void OLED_write_string(char* ch, uint8_t line, uint8_t col){
 	OLED_pos(line, col);
 	size_t len = strlen(ch);
 	for(size_t i = 0; i < len; i++){
-		printf("iterating: %8d",ch[i]);
-		printf("\n\r");
+
 		OLED_write(ch[i]);
 	}
+}
+
+void OLED_print_list(char *str_list[], int hover_menu_number){
+	//size_t len = sizeof(str_list);
+	OLED_reset();
+	int length = length_of_list(str_list);
+	printf("length of list %d \n\r", length);
+	for (size_t i = 0; i < length; i++){
+		
+		if (i == hover_menu_number)
+		{
+			OLED_goto_column(0);
+			OLED_goto_line(i);				
+			OLED_write(127);
+			OLED_write_string(str_list[i],i,10);
+		} 
+		else
+		{
+			OLED_write_string(str_list[i],i,10);
+		}		
+	}
+}
+
+
+int length_of_list(const char **list){
+	int number_of_strings = 0;
+	while(list[number_of_strings] != NULL){
+		number_of_strings++;
+	}
+	return number_of_strings;
+	
 }

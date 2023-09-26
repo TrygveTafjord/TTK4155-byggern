@@ -9,7 +9,14 @@
 #ifndef INTERRUPT_H_
 #define INTERRUPT_H_
 
+#include <avr/interrupt.h>
+#include <avr/io.h>
+#include <avr/iom162.h>
 
+//uint8_t button_pressed = 0;
+
+//Funksjon som blir kalt ¨når interrupt utløses
+ISR(INT2_vect);
 
 
 

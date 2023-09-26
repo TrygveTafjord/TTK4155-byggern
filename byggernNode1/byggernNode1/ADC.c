@@ -15,7 +15,7 @@ void adc_init(void){
 	TCCR1A |= (1<<COM1A0);
 	TCCR1B |= (1<<CS10) | (1<<WGM12);
 	DDRD |= (1 << PD5);	
-	DDRE |= (1 << PE0); 
+	//DDRE |= (1 << PE0); 
 	};
 
 
@@ -28,14 +28,13 @@ ADC_readings adc_read(ADC_Calibration* calibration_values){
 	ext_mem[0] = 0;
 	//dersom det oppstår problem, legg inn en delay for BUSY
 	uint8_t temp = ext_mem[0];
-	printf("temp: %8d",temp);
-	printf("\n\r");
-	printf("calX: %8d",calibration_values->joystick_y);
-	printf("\n\r");
+
 	if(temp <= calibration_values->joystick_y){
 		readings.joystick_y = (int8_t)((float)temp/calibration_values->joystick_y*100)-100;
+		readings.joystick_y = readings.joystick_y * -1;
 	} else {
 		readings.joystick_y = (int8_t)((temp - calibration_values->joystick_y)/(255-calibration_values->joystick_y)*100);
+		readings.joystick_y = readings.joystick_y * -1;
 	}
 	temp = ext_mem[0];
 	if(temp <= calibration_values->joystick_x){
@@ -106,6 +105,25 @@ void adc_test(void) {
 	}
 
 
-
-
+enum JoystickDirections JoystickToEnum(ADC_readings readings){
+	
+	enum JoystickDirections highest_direction = NEUTRAL;
+	if (abs(readings.joystick_y) > 50)
+	{
+		if (readings.joystick_y > 50){
+			highest_direction = UP;
+			} else{
+			highest_direction = DOWN;
+		}
+	}
+	if (abs(readings.joystick_x) > 50 & abs(readings.joystick_x) > abs(readings.joystick_y))
+	{
+		if (readings.joystick_y > 50){
+			highest_direction = LEFT;
+			} else{
+			highest_direction = RIGHT;
+		}
+	}
+	return highest_direction;
+}
 	

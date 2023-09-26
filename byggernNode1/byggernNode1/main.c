@@ -12,6 +12,7 @@
 #include "RAM.h"
 #include "ADC.h"
 #include "OLED.h"
+#include "interrupt.h"
 
 #define FOSC 4915200// Clock Speed
 #define BAUD 9600
@@ -21,46 +22,98 @@
 
 ADC_Calibration ADC_calibrated_values;
 ADC_readings ADC_read_values; 
+int hover_line = 0;
+enum JoystickDirections currentJoystickDir = NEUTRAL;
+enum JoystickDirections prevJoystickDir = NEUTRAL;
+extern uint8_t button_pressed;
 
+
+const char *main_menu[]={
+	"play",
+	"karrieremodus",
+	"highscore",
+	"settings",
+	NULL
+};
+	
+	
 int main(void)
 {
+	
+	//Init-funksjoner
 	USART_Init(MYUBRR);
 	printf("initializing ADC\n\r");
 	adc_init();
 	xmem_init();
 	OLED_init();
+	interrupt_init();
+	
+	
 	ADC_calibrated_values = pos_calibration(ADC_calibrated_values);
 	char* ch = "Hello World!";
 	char* ch1 = (char *) 'B';
 	volatile char *ext_mem1 = (char *) 0x1000;
 	volatile char *ext_mem2 = (char *) 0x1200;
 	//ADC_readings data;
+	
+	
+	OLED_reset();
+	OLED_print_list(main_menu, hover_line);
+
+	sei();
 	while (1) {
-		OLED_reset();
-		while(1){
-			OLED_write_string(ch, 4, 10);
-			_delay_ms(1000);
+	
+		//cli();
+		ADC_read_values = adc_read(&ADC_calibrated_values);
+	
+		prevJoystickDir = currentJoystickDir;
+		currentJoystickDir = JoystickToEnum(ADC_read_values);
+	
+	
+		if (prevJoystickDir != currentJoystickDir & currentJoystickDir == UP & hover_line < length_of_list(main_menu)-1){
+			printf("Joystick_y value: %d \n\r", ADC_read_values.joystick_y);
+			hover_line ++;
+			OLED_print_list(main_menu, hover_line);
+		}else if (prevJoystickDir != currentJoystickDir & currentJoystickDir == DOWN & hover_line > 0)
+		{
+			printf("Joystick_y value: %d \n\r", ADC_read_values.joystick_y);
+			hover_line --;
+			OLED_print_list(main_menu, hover_line);
 		}
-/*
-	printf(" data from channel-0: ");
-	data = adc_read(&ADC_calibrated_values);
+		else{
+			//do  nothing
+		}
+		
+		
+		if(button_pressed){	
+			button_pressed = 0;
+			switch(hover_line){
+			case 0:
+				printf("play");
+				//play();
+				break;
+			case 1:
+				printf("karrieremodus");
+				//karrieremodus();
+				break;
+			case 2:
+				printf("gigascore");
+				//highscore();
+				break;
+			case 3:
+				printf("settings");
+				//settings();
+				break;
+			}
+			
+		}
+		//sei();
 	
-	printf("joystick_x: %8d",data.joystick_x);
-	printf("\n\r");
-	
-	printf("joystick_y: %8d",data.joystick_y);
-	printf("\n\r");
-
-	printf("slider_left: %8d",data.slider_left);
-	printf("\n\r");
-	
-	printf("slider_right: %8d",data.slider_right);
-	printf("\n\r");*/
+		//if (PE0){
+			////printf("NIIIIIICE");
+		//}
 	
 	
-	//OLED_write();
-	_delay_ms(100);
 	}
-
 }
 
