@@ -12,10 +12,13 @@
 #include <avr/interrupt.h>
 #include <avr/io.h>
 #include <avr/iom162.h>
+#include "mcp2515.h"
 
 //uint8_t button_pressed = 0;
 
 //Funksjon som blir kalt ¨når interrupt utløses
+
+ISR(INT0_vect);
 ISR(INT2_vect);
 
 

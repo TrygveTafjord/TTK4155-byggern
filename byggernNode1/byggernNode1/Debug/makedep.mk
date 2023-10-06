@@ -4,11 +4,17 @@
 
 ADC.c
 
+can_driver.c
+
 interrupt.c
+
+mcp2515.c
 
 OLED.c
 
 RAM.c
+
+spi.c
 
 UARTinterface.c
 

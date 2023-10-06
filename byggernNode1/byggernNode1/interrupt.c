@@ -6,6 +6,7 @@
  */ 
 
 #include "interrupt.h"
+#include "can_driver.h"
 
 uint8_t button_pressed = 0;
 
@@ -20,8 +21,13 @@ void interrupt_init(){
 	MCUCSR &= ~(1 << ISC2);
 	//Aktiverer INT0 interrupten
 	GICR |= (1 << INT2);
-
 	
+	MCUCR |= (1<<ISC01);
+	GICR |= (1 << INT0);
+	
+	sei();
+	
+	printf("interrupt initialized\n\r");
 }
 
 
@@ -29,4 +35,8 @@ ISR(INT2_vect){
 	//Interrupt håndteringskode
 	button_pressed = 1;
 	
+}
+
+ISR(INT0_vect){
+	can_recieveMessage();
 }

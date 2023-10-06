@@ -108,17 +108,17 @@ void adc_test(void) {
 enum JoystickDirections JoystickToEnum(ADC_readings readings){
 	
 	enum JoystickDirections highest_direction = NEUTRAL;
-	if (abs(readings.joystick_y) > 50)
+	if (abs(readings.joystick_y) > 75)
 	{
-		if (readings.joystick_y > 50){
+		if (readings.joystick_y > 75){
 			highest_direction = UP;
 			} else{
 			highest_direction = DOWN;
 		}
 	}
-	if (abs(readings.joystick_x) > 50 & abs(readings.joystick_x) > abs(readings.joystick_y))
+	if (abs(readings.joystick_x) > 75 & abs(readings.joystick_x) > abs(readings.joystick_y))
 	{
-		if (readings.joystick_y > 50){
+		if (readings.joystick_y > 75){
 			highest_direction = LEFT;
 			} else{
 			highest_direction = RIGHT;

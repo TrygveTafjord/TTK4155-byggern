@@ -11,8 +11,8 @@
 
 #include <avr/io.h>
 
-void USART_Init( unsigned int ubrr );void USART_Transmit( unsigned char data );
-unsigned char USART_Receive( void );
+void USART_Init( uint8_t ubrr );void USART_Transmit( uint8_t data );
+uint8_t USART_Receive( void );
 
 
 

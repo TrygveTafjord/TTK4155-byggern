@@ -13,6 +13,9 @@
 #include "ADC.h"
 #include "OLED.h"
 #include "interrupt.h"
+#include "can_driver.h"
+#include "spi.h"
+#include "mcp2515.h"
 
 #define FOSC 4915200// Clock Speed
 #define BAUD 9600
@@ -47,7 +50,7 @@ int main(void)
 	xmem_init();
 	OLED_init();
 	interrupt_init();
-	
+	can_init();
 	
 	ADC_calibrated_values = pos_calibration(ADC_calibrated_values);
 	char* ch = "Hello World!";
@@ -59,8 +62,19 @@ int main(void)
 	
 	OLED_reset();
 	OLED_print_list(main_menu, hover_line);
+	
+	CAN_message_t message1;
+	message1.id = 0xA5;
+	message1.length = 2;
+	message1.data[0] = 0xA0;
+	message1.data[1] = 0xA0;
+	can_sendMessage(&message1);
 
-	sei();
+	
+	//printf("for: 0x%x\n\r", mcp2515_read(MCP_CANCTRL));
+	//mcp2515_bit_modify(MCP_CANCTRL, MODE_MASK, MODE_LOOPBACK);
+	//printf("etter: 0x%x\n\r", mcp2515_read(MCP_CANCTRL));
+	//sei();
 	while (1) {
 	
 		//cli();
